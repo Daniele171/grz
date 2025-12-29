@@ -1,0 +1,12 @@
+{
+  "name": "secret-code-game",
+  "version": "1.0.0",
+  "description": "Gioco Secret Code",
+  "main": "main.js",
+  "type": "module",
+  "scripts": {
+    "start": "npx serve"
+  },
+  "author": "",
+  "license": "ISC"
+}
