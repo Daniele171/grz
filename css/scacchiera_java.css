@@ -1,0 +1,21 @@
+#scacchiera
+{
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+
+td
+{
+    height: 50px;
+    width: 50px;
+}
+
+.black
+{
+    background-color: black;
+}
+
+.white
+{
+    background-color: white;
+}

@@ -1,0 +1,163 @@
+/* --- ANIMAZIONI --- */
+@keyframes dissolvenza_entrata {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+}
+
+@keyframes sposta {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(0%); }
+}
+
+/* --- RESET BASE --- */
+* {
+    box-sizing: border-box; /* Importante per i calcoli delle larghezze */
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: #e0e0e0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0; /* Rimuove margini di default del browser */
+    padding-top: 80px; /* Spazio per l'header fisso */
+    padding-bottom: 60px; /* Spazio per il footer */
+    animation: dissolvenza_entrata 2s;
+}
+
+/* --- HEADER --- */
+header {
+    background-color: #e0e0e0;
+    color: #333;
+    width: 100%;
+    padding: 15px;
+    text-align: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    border-bottom: 1px solid #ccc;
+    z-index: 1000; /* Assicura che stia sopra tutto */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* Leggera ombra */
+}
+
+h2 {
+    margin: 0;
+    font-size: 1.5em;
+}
+
+header p {
+    margin: 5px 0 0;
+    font-size: 0.9em;
+    color: #666;
+}
+
+/* --- CONTENITORE PRINCIPALE --- */
+.container {
+    text-align: center;
+    padding: 20px;
+    width: 90%;
+    max-width: 1200px; /* Limite larghezza su schermi giganti */
+    animation: dissolvenza_entrata 2s;
+}
+
+/* --- GRIGLIA DELLE CARTE --- */
+.card-deck {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center; /* Centra le carte */
+    gap: 30px; /* Spazio tra le carte (moderno) */
+    margin-top: 20px;
+    animation: sposta 1.5s;
+}
+
+/* --- CARTA SINGOLA --- */
+.card {
+    background-color: white; /* Sfondo bianco per staccare dal grigio */
+    width: 300px; /* Larghezza base */
+    max-width: 100%; /* Non uscire mai dallo schermo */
+    border-radius: 10px; /* Angoli arrotondati */
+    overflow: hidden; /* Taglia l'immagine se esce dai bordi */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s, box-shadow 0.3s;
+    display: flex;
+    flex-direction: column; /* Organizza immagine e testo in colonna */
+}
+
+.card:hover {
+    transform: scale(1.03);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+}
+
+.card-img-top {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+}
+
+.card-body {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Spinge i bottoni in basso se c'è spazio */
+    flex-grow: 1; /* Occupa tutto lo spazio rimanente */
+}
+
+.card-title {
+    color: #007bff;
+    margin-top: 0;
+    font-size: 1.25em;
+}
+
+.card-text {
+    color: #555;
+    font-size: 0.95em;
+    line-height: 1.5;
+}
+
+/* --- FOOTER --- */
+footer {
+    background-color: #e0e0e0;
+    color: #333;
+    width: 100%;
+    padding: 15px;
+    text-align: center;
+    border-top: 1px solid #ccc;
+    margin-top: auto; /* Spinge il footer in fondo se la pagina è corta */
+    font-size: 0.8em;
+}
+
+/* --- MEDIA QUERY (LA MAGIA PER IL TELEFONO) --- */
+@media (max-width: 768px) {
+    /* Regole solo per schermi più piccoli di 768px (Tablet e Telefoni) */
+    
+    body {
+        padding-top: 100px; /* Più spazio per l'header che potrebbe andare su 2 righe */
+    }
+
+    h2 {
+        font-size: 1.2em; /* Testo header un po' più piccolo */
+    }
+
+    .container {
+        width: 100%; /* Usa tutto lo schermo */
+        padding: 10px;
+    }
+
+    .card-deck {
+        flex-direction: column; /* Mette le carte una sotto l'altra */
+        align-items: center; /* Le centra */
+        gap: 20px;
+    }
+
+    .card {
+        width: 90%; /* La carta occupa quasi tutto lo schermo */
+        height: auto; /* L'altezza si adatta al contenuto */
+    }
+}

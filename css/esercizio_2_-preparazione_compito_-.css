@@ -1,0 +1,32 @@
+body
+{
+    background-color: #00ffff;
+}
+
+h1, table
+{
+    text-align: center;
+}
+
+table,td,th
+{
+    width: 50%;
+    border-right: 50%;
+}
+
+th
+{
+    background-color: #32cd32;
+}
+
+td
+{
+    background-color: #adff2f;
+    text-align: center;
+}
+
+img
+{
+    height: 100px;
+    width: 250px;
+}

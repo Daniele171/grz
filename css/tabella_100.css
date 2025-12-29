@@ -1,0 +1,13 @@
+td {
+    border: 1px solid black;
+    padding: 5px;
+}
+
+.primo {
+    background-color: yellow;
+}
+
+body, table{
+    text-align: center;
+    margin: auto;
+}

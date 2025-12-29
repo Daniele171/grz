@@ -1,0 +1,57 @@
+footer
+{
+    text-align: center;
+    font-style: italic;
+}
+
+table
+{
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+    border: 1px solid black;
+}
+
+img
+{
+    height: 100px;
+    width: 250px;
+}
+
+body
+{
+    background-color: #00ffff;
+}
+
+th
+{
+    background-color: #32cd32;
+    border: 1px solid black;
+}
+
+td
+{
+    background-color: #adff2f;
+    border: 1px solid black;
+}
+
+hr
+{
+    border: none;
+    border-top: 4px solid red;
+}
+
+.ridimensiona
+{
+    width: 80px;
+}
+
+header, footer
+{
+    text-align: center;
+}
+
+.check
+{
+    text-align: center;
+}

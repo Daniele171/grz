@@ -1,0 +1,92 @@
+.header
+{
+    background-color: #00AAAA;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    text-align: center;
+}
+
+.titolo
+{
+    color: black;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.menù
+{
+    margin-top: 10px;
+    font-family: Arial, sans-serif;
+    font-size: 10px;
+}
+
+.voci
+{
+    color: white;
+    text-decoration: none;
+    margin-right: 20px;
+}
+
+.voci:hover
+{
+    color: #00AAAA;
+    background-color: white;
+}
+
+table
+{
+    margin: auto;
+    border-collapse: collapse;
+    margin-top: 20px;
+    border: 5px solid #00AAAA;
+}
+
+td,th
+{
+    padding: 10px;
+    border: 5px solid #00AAAA;
+    text-align: center;
+}
+
+th
+{
+    background-color: #00AAAA;
+    color: black;
+    font-weight: bold;
+    font-family: Arial, sans-serif;
+    font-size: 10px;
+}
+
+img
+{
+    width: 100px;
+}
+
+td.prima
+{
+    font-family: Arial, sans-serif;
+    font-size: 10px;
+    color: black;
+    text-align: right;
+}
+
+td.prima:hover
+{
+    color: lightgreen;
+    text-align: center;
+}
+
+.data
+{
+    font-family: Arial, sans-serif;
+    font-size: 10px;
+    color: red;
+    text-align: left;
+}
+
+.evidenzia
+{
+    background-color: yellow;
+    text-decoration: underline;
+}

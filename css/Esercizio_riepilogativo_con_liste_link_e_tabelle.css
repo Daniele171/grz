@@ -1,0 +1,81 @@
+body
+{
+    background-color: #00ffff;
+}
+
+h1
+{
+    text-align: center;
+}
+
+.linea
+{
+    border: 4px solid red;
+    clear: both;
+}
+
+.left
+{
+	float: left;
+    margin-right: 325px;
+}
+
+.right
+{
+	float: right;
+    margin-left: 325px;
+}
+
+.DispRete, .trattoda
+{
+    float: left;
+    margin-top: 10px;
+    width: 800px;
+}
+
+.DispRete
+{
+	margin-top: 50px;
+}
+
+p
+{
+	margin-top: 10px;
+    margin-bottom: 10px;
+    text-align: justify; 
+}
+
+.trattoda
+{
+	text-align: center;
+    font-style: italic;
+}
+
+img
+{
+    height: 150px;
+    width: 200px;
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+
+span
+{
+    color: red;
+}
+
+.clearfix
+{
+	overflow: auto;
+}
+
+ul
+{
+    list-style-type: square;
+}
+
+footer
+{
+    text-align: center;
+    font-style: italic;
+}

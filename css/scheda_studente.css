@@ -1,0 +1,28 @@
+h1
+{
+    text-decoration: overline;
+}
+table,td,th
+{
+    border: 1px solid black;
+}
+
+table
+{
+    border-collapse: collapse;
+}
+
+img
+{
+    height: 100px;
+}
+
+.red
+{
+    color: red;
+}
+
+.green
+{
+    color: green;
+}
