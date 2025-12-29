@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Esercizio 3 - Preparazione al Compito -</title>
+        <link rel="stylesheet" href="../css/esercizio_3_-preparazione_compito_-.css"/>
+    </head>
+
+    <body>
+        <h1>Tabelle in HTML 5</h1>
+        <h2>Colori</h2>
+        <p>Tabella di soli dati formata da tre righe e tre colonne. Bordo di spessore 1.</p>
+
+        <table>
+            <tr>
+                <td>Bianco</td>
+                <td>Giallo</td>
+                <td>Rosso</td>
+            </tr>
+
+            <tr>
+                <td>Viola</td>
+                <td>Verde</td>
+                <td>Marrone</td>
+            </tr>
+
+            <tr>
+                <td>Blu</td>
+                <td>Azzurro</td>
+                <td>Nero</td>
+            </tr>
+        </table>
+
+        <h2>Capitali europee</h2>
+        <p>Tabella di 4 righe e 3 colonne con celle d’intestazione. Bordo di spessore 1. Didascalia posta sulla parte superiore della tabella.</p>
+        <p class="center">Capitali europee</p>
+
+        <table>
+            <tr>
+                <th>Città</th>
+                <th>Abitanti</th>
+                <th>Superficie (km2)</th>
+            </tr>
+
+            <tr>
+                <td>Madrid</td>
+                <td>3.099.854</td>
+                <td>606</td>
+            </tr>
+
+            <tr>
+                <td>Parigi</td>
+                <td>2.144.700 </td>
+                <td>105</td>
+            </tr>
+
+            <tr>
+                <td>Roma</td>
+                <td>2.553.873</td>
+                <td>1.285</td>
+            </tr>
+        </table>
+
+        <h2>Registro delle presenze</h2>
+        <p>Tabella di 6 righe e 5 colonne con celle d’intestazione e spanning di riga e di colonna. Bordo di spessore 5. Didascalia posta sulla parte superiore della tabella. <br>
+            Struttura suddivisa in intestazione, corpo e piede di tabella.</p>
+        <p class="center">Registro delle assenze</p>
+
+        <table>
+            <tr>
+                <th rowspan="2">N.</th>
+                <th rowspan="2">Studente</th>
+                <th colspan="3">Assenze</th>
+            </tr>
+
+            <tr>
+                <th>14-gen</th>
+                <th>21-gen</th>
+                <th>28-gen</th>
+            </tr>
+
+            <tr>
+                <td>1</td>
+                <td>Alberici Francesca</td>
+                <td></td>
+                <td></td>
+                <td>A</td>
+            </tr>
+
+            <tr>
+                <td>2</td>
+                <td>Criselli Giuseppe</td>
+                <td></td>
+                <td></td>
+                <td>A</td>
+            </tr>
+
+            <tr>
+                <td>3</td>
+                <td>Paolucci Viviana</td>
+                <td>A</td>
+                <td></td>
+                <td></td>
+            </tr>
+
+            <tr>
+                <th colspan="2">Assenze del Giorno</th>
+                <th>1</th>
+                <th>0</th>
+                <th>2</th>
+            </tr>
+        </table>
+
+        <h2>Recensione di libri</h2>
+        <p>Tabella di 3 righe e 3 colonne senza bordo</p>
+
+        <table class="seconda">
+            <tr>
+                <th class="seconda">Titolo</th>
+                <th class="seconda">Autore</th>
+                <th class="seconda">Recensione</th>
+            </tr>
+
+            <tr>
+                <td class="seconda">La luna e i falò</td>
+                <td class="seconda">Pavese C.</td>
+                <td class="seconda">Finita la guerra il protagonista torna quarantenne nella sua terra, le Langhe, abbandonata vent’anni prima per cercare fortuna in America.</td>
+            </tr>
+
+            <tr>
+                <td class="seconda">Lontano</td>
+                <td class="seconda">Parise G.</td>
+                <td class="seconda">Brevi racconti nei quali particolari momenti della vita passata dell’autore si riaccendono come lampi improvvisi.</td>
+            </tr>
+        </table>
+    </body>
+</html>

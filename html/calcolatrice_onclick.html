@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calcolatrice ONCLICK</title>
+    <link rel="stylesheet" href="../css/calcolatrice_onclick.css"/>
+</head>
+<body>
+    <div class="container">
+        <h1>Calcolatrice con evento ONCLICK</h1>
+        <form id="calcolatriceForm">
+            <label for="operando1">Operando 1:</label>
+            <input type="number" id="operando1" name="operando1" required>
+            <br>
+            <label for="operando2">Operando 2:</label>
+            <input type="number" id="operando2" name="operando2" required>
+            <br>
+            <label for="operazione">Operazione:</label>
+            <select id="operazione" name="operazione" required>
+                <option value="addizione">Addizione</option>
+                <option value="sottrazione">Sottrazione</option>
+                <option value="moltiplicazione">Moltiplicazione</option>
+                <option value="divisione">Divisione</option>
+            </select>
+            <br>
+            <input type="button" value="Calcola" id="calcolaButton">
+        </form>
+        <div id="risultato" class="risultato"></div>
+    </div>
+    <script src="../js/calcolatrice_onclick.js" text="javascript"></script>
+</body>
+</html>

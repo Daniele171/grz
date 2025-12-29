@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conversione Binario-Decimale</title>
+    <link rel="stylesheet" href="../css/conversione_binario_decimale.css">
+</head>
+<body>
+    <div class="gruppo">
+        <h1>Conversione Binario-Decimale</h1>
+        <div>
+            <label for="numeroInput">Inserisci un numero:</label>
+            <input type="number" id="numeroInput" placeholder="Numero">
+        </div>
+     	<div>
+            <input type="radio" id="decimaleBinario" name="conversione" value="decimale-to-binario" checked>
+            <label for="decimaleBinario">Decimale a Binario</label>
+        </div>
+        <div>
+            <input type="radio" id="binarioDecimale" name="conversione" value="binario-to-decimale">
+            <label for="binarioDecimale">Binario a Decimale</label>
+        </div>
+        <button id="convertiButton">Converti</button>
+        <div id="risultatoConversione"></div>
+    </div>
+    <script src="../js/conversione_binario_decimale.js"></script>
+</body>
+</html>

@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 500px;
+            margin: 50px auto;
+            padding: 20px;
+            text-align: center;
+            background-color: #f8f9fa;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #495057;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+        input[type="url"] {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            border: 2px solid #ced4da;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            box-sizing: border-box;
+        }
+        input[type="url"]:focus {
+            outline: none;
+            border-color: #007bff;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        button:disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
+        }
+        #qrcode {
+            margin: 30px auto 20px;
+            padding: 20px;
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            display: none;
+        }
+        .error {
+            color: #dc3545;
+            margin: 10px 0;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Generatore QR Code</h1>
+        <input type="url" id="linkInput" placeholder="Inserisci il link qui..." autocomplete="off">
+        <br>
+        <button onclick="generateQR()">Genera QR Code</button>
+        <button onclick="clearQR()">Pulisci</button>
+        <div class="error" id="errorMessage">Inserisci un link valido</div>
+        <div id="qrcode"></div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+    <script>
+        function generateQR() {
+            const input = document.getElementById('linkInput');
+            const qrcodeDiv = document.getElementById('qrcode');
+            const errorDiv = document.getElementById('errorMessage');
+            const link = input.value.trim();
+            
+            // Nascondi errori precedenti
+            errorDiv.style.display = 'none';
+            
+            // Verifica se il campo è vuoto
+            if (!link) {
+                errorDiv.textContent = 'Inserisci un link';
+                errorDiv.style.display = 'block';
+                return;
+            }
+            
+            // Usa il link esattamente come inserito dall'utente
+            let finalLink = link;
+            
+            try {
+                // Genera il QR code con gestione errori migliorata
+                const qr = qrcode(0, 'M');
+                qr.addData(finalLink);
+                qr.make();
+                
+                // Mostra il QR code
+                qrcodeDiv.innerHTML = qr.createImgTag(6, 0);
+                qrcodeDiv.style.display = 'block';
+                
+                console.log('QR generato per: ' + finalLink);
+                
+            } catch (error) {
+                console.error('Errore QR:', error);
+                errorDiv.textContent = 'Errore nella generazione: ' + error.message;
+                errorDiv.style.display = 'block';
+            }
+        }
+        
+        function clearQR() {
+            document.getElementById('linkInput').value = '';
+            document.getElementById('qrcode').style.display = 'none';
+            document.getElementById('errorMessage').style.display = 'none';
+            document.getElementById('linkInput').focus();
+        }
+        
+        // Genera QR code premendo Enter
+        document.getElementById('linkInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                generateQR();
+            }
+        });
+        
+        // Focus automatico sul campo input
+        window.onload = function() {
+            document.getElementById('linkInput').focus();
+        };
+    </script>
+</body>
+</html>

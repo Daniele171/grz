@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generatore di Tabella</title>
+    <link rel="stylesheet" href="../css/tabella_random.css">
+</head>
+<body>
+    <h1>Generatore di Tabella</h1>
+    <div>
+        <label for="righe">Numero di righe:</label>
+        <input type="number" id="righe" min="1" value="3">
+        
+        <label for="colonne">Numero di colonne:</label>
+        <input type="number" id="colonne" min="1" value="3">
+        
+        <button id="crea-tabella">Crea Tabella</button>
+    </div>
+    
+    <table id="tabella"></table>
+    
+    <button id="calcola-media">Calcola Media</button>
+    <div id="media"></div>
+    
+    <script src="../js/tabella_random.js">type="text/javascript"</script>
+</body>
+</html>

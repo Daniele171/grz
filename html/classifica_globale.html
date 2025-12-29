@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Classifica Globale - Secret Code</title>
+    <link rel="stylesheet" href="../css/index_altervista.css"> 
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #121212;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+        h1 { color: #ff6a00; }
+        
+        .leaderboard-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #1e1e1e;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #333;
+        }
+
+        th {
+            background-color: #ff6a00;
+            color: black;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        tr:last-child td { border-bottom: none; }
+        
+        /* Evidenzia i primi 3 */
+        tr:nth-child(1) td { color: #FFD700; font-weight: bold; } /* Oro */
+        tr:nth-child(2) td { color: #C0C0C0; font-weight: bold; } /* Argento */
+        tr:nth-child(3) td { color: #CD7F32; font-weight: bold; } /* Bronzo */
+
+        .loading { color: gray; margin: 20px; }
+    </style>
+</head>
+<body>
+
+    <h1>🏆 CLASSIFICA GLOBALE 🏆</h1>
+    <p>I migliori agenti segreti che usano l'App Android.</p>
+    <br>
+
+    <div class="leaderboard-container">
+        <table id="scoreTable">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Agente</th>
+                    <th>Livello</th>
+                    <th>Data</th>
+                </tr>
+            </thead>
+            <tbody id="scoreBody">
+                </tbody>
+        </table>
+        <div id="loadingMsg" class="loading">Caricamento dati in corso...</div>
+    </div>
+
+    <br><br>
+    <a href="extrascolastici.html" style="color: #ff6a00; text-decoration: none;">← Torna agli Extra</a>
+
+    <script>
+        // Funzione per caricare i dati dal file JSON condiviso
+        async function loadLeaderboard() {
+            try {
+                // Il file JSON viene creato automaticamente dal PHP quando qualcuno salva dall'App
+                // Si trova nella cartella ../php/ rispetto a questo file html
+                const response = await fetch('../php/scores.json');
+                
+                if (!response.ok) throw new Error("Nessun dato trovato ancora.");
+
+                let data = await response.json();
+
+                // 1. Ordiniamo i giocatori dal livello più alto al più basso
+                data.sort((a, b) => b.level - a.level);
+
+                const tbody = document.getElementById('scoreBody');
+                tbody.innerHTML = ''; // Pulisce la tabella
+                document.getElementById('loadingMsg').style.display = 'none';
+
+                // 2. Creiamo le righe della tabella
+                data.forEach((player, index) => {
+                    const date = new Date(player.last_updated).toLocaleDateString('it-IT');
+                    
+                    const row = `
+                        <tr>
+                            <td>${index + 1}</td>
+                            <td>${player.username}</td>
+                            <td>Liv. ${player.level}</td>
+                            <td style="font-size: 0.8em; color: gray;">${date}</td>
+                        </tr>
+                    `;
+                    tbody.innerHTML += row;
+                });
+
+            } catch (error) {
+                console.error(error);
+                document.getElementById('loadingMsg').innerText = "Ancora nessun agente in classifica.";
+            }
+        }
+
+        // Avvia il caricamento appena apri la pagina
+        loadLeaderboard();
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,1016 @@
+<!DOCTYPE html>
+<html lang="it">
+  <head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Avventura delle Tabelline</title>
+  <meta name="description" content="Gioco educativo per imparare le tabelline dall'1 al 10 con livelli, punteggi, timer e accessibilità." />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg: linear-gradient(180deg,#071028 0%, #0f172a 60%);
+      --surface: #07111a;
+      --muted: #9aa9bf;
+      --text: #e6eef8;
+      --accent: #22c55e;
+      --accent-2: #38bdf8;
+      --glass: rgba(255,255,255,0.03);
+      --card-border: rgba(255,255,255,0.06);
+      --glow: 0 8px 30px rgba(34,197,94,0.07);
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body{
+      margin:0; font-family: 'Inter', ui-rounded, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      background: radial-gradient(1000px 600px at 10% 10%, rgba(56,189,248,0.06), transparent), #071028;
+      color: var(--text);
+      -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+    }
+    a.skip { position:absolute; left:-9999px; top:auto; width:1px; height:1px; overflow:hidden; }
+    a.skip:focus { position:static; width:auto; height:auto; padding:8px 12px; background:#111827; border:2px solid var(--focus); border-radius:12px; margin:8px; display:inline-block; }
+
+    .container { max-width: 1100px; margin: 24px auto; padding: 28px; }
+
+    .card {
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      backdrop-filter: blur(6px) saturate(120%);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      padding: 20px;
+      box-shadow: var(--glow);
+    }
+
+    .title { font-size: clamp(26px, 3vw + 10px, 44px); margin: 0 0 8px; font-weight:700; letter-spacing: -0.5px; text-shadow: 0 2px 10px rgba(0,0,0,0.4); }
+    .subtitle { color: var(--muted); margin: 0 0 18px; font-weight: 500; }
+
+    .row { display: grid; grid-template-columns: 1fr; gap: 16px; }
+    @media(min-width: 900px){ .row { grid-template-columns: 2fr 1fr; } }
+
+  .pill { display:inline-flex; align-items:center; gap:8px; padding:6px 12px; border-radius:999px; background:linear-gradient(180deg, rgba(255,255,255,0.01), transparent); border:1px solid rgba(255,255,255,0.04); font-size:14px; }
+    .badges { display:flex; flex-wrap:wrap; gap:10px; }
+
+    .controls { display:flex; flex-wrap:wrap; gap:10px; align-items:center; }
+    .controls > * { flex: none; }
+
+    button, .btn {
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      color: var(--text);
+      border: 1px solid rgba(255,255,255,.06);
+      padding: 10px 16px;
+      border-radius: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: none; /* animations disabled */
+    }
+    button:hover { box-shadow: 0 10px 18px rgba(0,0,0,0.18); }
+    button:active { transform: none; }
+    button[disabled] { opacity: .45; cursor: not-allowed; }
+
+  .primary { background: linear-gradient(90deg, var(--accent), var(--accent-2)); color:#042022; border: none; box-shadow: 0 8px 30px rgba(34,197,94,0.12); }
+  .accent { background: linear-gradient(90deg, #60a5fa, #38bdf8); color:#042022; border: none; box-shadow: 0 8px 30px rgba(56,189,248,0.12); }
+  .danger { background: linear-gradient(90deg, #f97316, #ef4444); color:#081018; border: none; }
+
+  .grid { display:grid; grid-template-columns: repeat(5, minmax(0,1fr)); gap:12px; }
+  .grid button { padding:16px; border-radius:14px; text-align:center; min-height:96px; display:flex; align-items:center; justify-content:center; transition: none; }
+  .grid button:not([disabled]){ cursor:pointer; }
+  .grid button:hover{ box-shadow: 0 10px 18px rgba(0,0,0,0.12); }
+
+    .panel { background:#0b1220; border:1px solid rgba(255,255,255,.08); border-radius:16px; padding:12px 14px; }
+    .label { font-size:12px; color:var(--muted); }
+    .value { font-weight:700; }
+
+    .question {
+      font-size: clamp(26px, 3vw + 8px, 48px);
+      text-align:center; margin: 8px 0 16px; letter-spacing: .4px; font-weight:700;
+      background: linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); padding:10px 14px; border-radius:12px;
+      box-shadow: 0 6px 22px rgba(2,6,23,0.5) inset;
+    }
+
+    .answer-wrap { display:flex; gap:10px; justify-content:center; align-items:center; flex-wrap:wrap; }
+    .answer-wrap input{ 
+      font-size: 24px; padding: 10px 12px; width: 160px; text-align:center;
+      border-radius: 12px; border:1px solid rgba(255,255,255,.15); background:#0b1220; color:var(--text);
+    }
+
+  .progressbar { height: 12px; background: rgba(255,255,255,0.02); border-radius:999px; overflow:hidden; border:1px solid rgba(255,255,255,.04); }
+  .progressbar > div { height:100%; width:0%; background: linear-gradient(90deg, var(--accent), var(--accent-2)); transition: width .28s cubic-bezier(.2,.9,.2,1); }
+
+  .medals{ display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+  .medal{ padding:6px 10px; border-radius:999px; background:#07111a; border:1px solid rgba(255,255,255,.06); font-size:13px; }
+
+  .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+
+    .hidden { display:none !important; }
+
+    .toast{ position: fixed; left:50%; transform: translateX(-50%); bottom: 16px; background: #0b1220; border:1px solid rgba(255,255,255,.15); border-radius: 12px; padding: 10px 14px; box-shadow: 0 10px 24px rgba(0,0,0,.35); }
+
+  /* Animations removed for simplicity and accessibility on low-power devices */
+  .confetti { display:none; }
+    /* small helpers */
+    .toast{ transition: transform .24s ease, opacity .24s ease; }
+  </style>
+  <style>
+    /* Layout & formatting improvements */
+    .lobby-actions { display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-top:16px; }
+    .lobby-actions .pill, .lobby-actions button { height:40px; display:inline-flex; align-items:center; padding:8px 12px; border-radius:10px; }
+    /* Tidy up grid cards */
+    .grid { display:grid; grid-template-columns: repeat(5, minmax(0,1fr)); gap:12px; }
+    .grid button { padding:14px; border-radius:14px; text-align:center; min-height:110px; display:flex; align-items:center; justify-content:center; }
+    .grid .medals { margin-top:8px; display:flex; gap:6px; justify-content:center; }
+    .grid .medal{ font-size:11px; padding:4px 6px; }
+    /* Ensure badges look crisp */
+    .badges .pill strong{ font-weight:800; }
+    /* Responsive breakpoints */
+    @media(max-width:1000px){ .grid{ grid-template-columns: repeat(3, 1fr); } }
+    @media(max-width:640px){ .grid{ grid-template-columns: repeat(2, 1fr); } .lobby-actions{ justify-content:center; } }
+    /* Make toast text wrap and visible */
+    .toast{ max-width:90%; word-break:break-word; }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#main">Salta al contenuto</a>
+  <div class="container">
+    <header class="card" aria-labelledby="title">
+      <h1 id="title" class="title">Avventura delle Tabelline</h1>
+      <p class="subtitle">Impara e domina le tabelline dall'<strong>1</strong> al <strong>10</strong> con livelli, timer, medaglie e sfide!
+      </p>
+      <div class="controls" role="group" aria-label="Impostazioni">
+        <label class="pill" for="playerName">Nome:
+          <input id="playerName" aria-label="Nome giocatore" style="margin-left:8px; background:#0b1220; border:1px solid rgba(255,255,255,.12); border-radius:10px; padding:6px 10px; color:var(--text);" placeholder="Es. Luca" />
+        </label>
+        <!-- Simplified controls: removed sound and animation toggles per request -->
+        <label class="pill" for="numQuestions">Domande per mondo:
+          <select id="numQuestions" style="margin-left:8px; background:#0b1220; border:1px solid rgba(255,255,255,.12); color:var(--text); padding:6px 8px; border-radius:8px;">
+            <option value="5">5</option>
+            <option value="8">8</option>
+            <option value="10" selected>10</option>
+            <option value="15">15</option>
+          </select>
+        </label>
+        <label class="pill" for="timerToggle">Timer:
+          <select id="timerToggle" style="margin-left:8px; background:#0b1220; border:1px solid rgba(255,255,255,.12); color:var(--text); padding:6px 8px; border-radius:8px;">
+            <option value="on" selected>ON</option>
+            <option value="off">OFF</option>
+          </select>
+        </label>
+  <button id="btnReset" class="pill danger" title="Azzera progressi">♻️ Reset</button>
+  <button id="dbgState" class="pill" title="Mostra stato per diagnostica" style="background:transparent; border:1px dashed rgba(255,255,255,0.06);">⚙️ Diagnostica</button>
+  <button id="showStateInline" class="pill" title="Mostra stato inline" style="background:transparent; border:1px dashed rgba(255,255,255,0.06);">🧾 Mostra stato</button>
+      </div>
+    </header>
+
+    <main id="main" class="row" tabindex="-1">
+      <section class="card" aria-labelledby="gameAreaHeading">
+        <h2 id="gameAreaHeading" class="sr-only">Area di gioco</h2>
+
+        <!-- LOBBY / SELEZIONE MONDO -->
+        <div id="lobby" role="region" aria-label="Selezione tabellina">
+          <div class="badges" style="margin-bottom:12px;">
+            <span class="pill">Punteggio totale: <strong id="totalScore">0</strong></span>
+            <span class="pill">Mondi completati: <strong id="worldsDone">0/10</strong></span>
+            <span class="pill">Record miglior tempo: <strong id="bestTime">–</strong></span>
+          </div>
+          <p class="subtitle">Scegli un mondo (tabellina) per iniziare. I mondi si sbloccano in ordine, ma in modalità Allenamento Libero puoi esercitarti su qualsiasi tabellina.</p>
+          <div class="grid" id="worldGrid" aria-live="polite"></div>
+          <div class="lobby-actions">
+            <button class="accent" id="freePractice">Allenamento Libero</button>
+            <button class="primary" id="bonusChallenge" disabled>Sfida Bonus (dopo 5 mondi)</button>
+            <button id="finalQuiz" disabled>Mega Quiz Finale</button>
+            <button id="downloadDiploma" title="Scarica diploma" disabled>🎓 Diploma</button>
+            <button id="exportPdf" title="Anteprima PDF" class="pill accent">Anteprima PDF</button>
+            <button id="exportProgress" title="Esporta stato (.json)" class="pill">⬇️ Esporta .json</button>
+            <label class="pill" for="importProgress" style="cursor:pointer;">
+              ⬆️ Importa
+              <input id="importProgress" type="file" accept="application/json" style="display:none" />
+            </label>
+          </div>
+        </div>
+
+        <!-- SCHERMATA DI GIOCO -->
+        <div id="game" class="hidden" role="region" aria-label="Domande">
+          <div class="badges" style="justify-content:space-between;">
+            <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+              <span class="pill">Mondo: <strong id="worldLabel">1</strong></span>
+              <span class="pill">Fase: <strong id="phaseLabel">Allenamento</strong></span>
+              <span class="pill">Q: <strong><span id="qIndex">1</span>/<span id="qTotal">10</span></strong></span>
+            </div>
+            <div style="display:flex; gap:10px; align-items:center;">
+              <span class="pill">Tempo: <strong id="timeLeft">60</strong>s</span>
+              <span class="pill">Punti: <strong id="score">0</strong></span>
+              <button id="quitToLobby" title="Esci">Esci</button>
+            </div>
+          </div>
+
+          <div class="progressbar" aria-hidden="true" style="margin:12px 0 10px;">
+            <div id="timeBar"></div>
+          </div>
+
+          <div class="question" aria-live="assertive" id="questionText">2 × 3 = ?</div>
+          <div class="answer-wrap">
+            <label for="answer" class="sr-only">Risposta</label>
+            <input id="answer" inputmode="numeric" pattern="[0-9]*" autocomplete="off" placeholder="Scrivi il risultato" />
+            <button id="submitAnswer" class="primary">Invia</button>
+            <button id="skipQuestion" title="Salta (−2 punti)">Salta</button>
+          </div>
+          <div aria-live="polite" id="feedback" class="subtitle" style="text-align:center; min-height: 28px; margin-top:8px;"></div>
+        </div>
+
+        <!-- RISULTATI LIVELLO -->
+        <div id="results" class="hidden" role="region" aria-label="Risultati livello">
+          <h3 class="title" id="resultsTitle">Livello completato!</h3>
+          <p id="resultsStats" class="subtitle"></p>
+          <div class="medals" id="medals"></div>
+          <div style="display:flex; gap:10px; margin-top:12px; flex-wrap:wrap;">
+            <button id="nextPhase" class="primary">Fase successiva</button>
+            <button id="retryLevel">Riprova</button>
+            <button id="backLobby">Torna ai mondi</button>
+          </div>
+        </div>
+
+      </section>
+
+      <aside class="card" aria-labelledby="helpHeading">
+        <h2 id="helpHeading" style="margin-top:0;">Istruzioni</h2>
+        <ul>
+          <li>Ogni <strong>mondo</strong> è una tabellina (1–10) con 3 fasi: <em>Allenamento</em>, <em>Sfida a tempo</em>, <em>Misto</em>.</li>
+          <li>Risposta giusta: <strong>+10</strong> punti. Risposta giusta entro 3s: <strong>bonus +5</strong>. Errore o salto: <strong>−2</strong>.</li>
+          <li>Completa 5 mondi per sbloccare la <strong>Sfida Bonus</strong>. Alla fine di tutti i mondi c'è il <strong>Mega Quiz Finale</strong>.</li>
+          <li>Tutto è salvato in locale: nome, punteggi, mondi completati, medaglie, record tempi.</li>
+          <li>Accessibilità: focus da tastiera, <kbd>Invio</kbd> invia risposta, <kbd>Esc</kbd> torna alla lobby.</li>
+        </ul>
+        <div class="panel" style="margin-top:12px;">
+          <div class="label">Ultimo messaggio</div>
+          <div id="liveRegion" aria-live="polite">Pronto a giocare!</div>
+        </div>
+      </aside>
+    </main>
+  </div>
+
+  <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
+  <div id="confetti" class="confetti" aria-hidden="true"></div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script>
+  (function(){
+    const $ = (sel, root=document) => root.querySelector(sel);
+    const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
+
+    const state = {
+      playerName: '',
+      totalScore: 0,
+      bestTime: null,
+      worlds: Array.from({length:10}, (_,i)=>({
+        id: i+1,
+        unlocked: i===0,
+        completed: false,
+        medals: { allenamento:null, sfida:null, misto:null },
+      })),
+      // stats structure: { [world]: { [b]: { asked: number, correct: number, times: [ms,...] } } }
+      stats: {},
+      run: null,
+    };
+
+    const storageKey = 'tabelline_avventura_v1';
+    const saved = localStorage.getItem(storageKey);
+    if(saved){
+      try{
+        const parsed = JSON.parse(saved);
+        // Validate parsed structure before merging
+        if(parsed && Array.isArray(parsed.worlds) && parsed.worlds.length>=1){
+          // Minimal validation passed: merge known keys only
+          state.playerName = parsed.playerName || state.playerName;
+          state.totalScore = typeof parsed.totalScore === 'number' ? parsed.totalScore : state.totalScore;
+          state.bestTime = parsed.bestTime || state.bestTime;
+          state.worlds = Array.isArray(parsed.worlds) ? parsed.worlds : state.worlds;
+          state.stats = parsed.stats && typeof parsed.stats === 'object' ? parsed.stats : state.stats;
+        } else {
+          // corrupted saved state: clear it to avoid breaking UI
+          console.warn('Saved state corrupted — resetting to defaults');
+          localStorage.removeItem(storageKey);
+        }
+      }catch(e){ console.warn('Failed to parse saved state', e); localStorage.removeItem(storageKey); }
+    }
+
+    // Ensure worlds array is valid; repair if needed while keeping stats
+    function ensureWorlds(){
+      if(!Array.isArray(state.worlds) || state.worlds.length !== 10){
+        const oldStats = state.stats || {};
+        const oldWorlds = Array.isArray(state.worlds) ? state.worlds : [];
+        const rebuilt = Array.from({length:10}, (_,i)=>({ id:i+1, unlocked: i===0, completed:false, medals:{ allenamento:null, sfida:null, misto:null } }));
+        // merge any safe fields from previous worlds by id
+        for(const w of oldWorlds){
+          if(!w || typeof w.id !== 'number') continue;
+          const idx = w.id - 1;
+          if(idx<0 || idx>=10) continue;
+          const target = rebuilt[idx];
+          if(typeof w.unlocked === 'boolean') target.unlocked = w.unlocked;
+          if(typeof w.completed === 'boolean') target.completed = w.completed;
+          if(w.medals && typeof w.medals === 'object') target.medals = Object.assign(target.medals, w.medals);
+        }
+        state.worlds = rebuilt;
+        // keep state.stats as-is (oldStats)
+        state.stats = oldStats;
+        save();
+        console.info('State.worlds was invalid and has been rebuilt.');
+        toast('Progressi riparati automaticamente');
+      } else {
+        // ensure each world has required fields
+        let changed = false;
+        for(let i=0;i<10;i++){
+          const w = state.worlds[i] || {};
+          if(typeof w.id !== 'number'){ w.id = i+1; changed = true; }
+          if(typeof w.unlocked !== 'boolean'){ w.unlocked = i===0; changed = true; }
+          if(typeof w.completed !== 'boolean'){ w.completed = false; changed = true; }
+          if(!w.medals || typeof w.medals !== 'object'){ w.medals = { allenamento:null, sfida:null, misto:null }; changed = true; }
+        }
+        if(changed){ save(); console.info('Repaired some missing world fields'); }
+      }
+    }
+
+    // Elements
+    const el = {
+      lobby: $('#lobby'), game: $('#game'), results: $('#results'),
+      worldGrid: $('#worldGrid'), totalScore: $('#totalScore'), worldsDone: $('#worldsDone'), bestTime: $('#bestTime'),
+      bonusChallenge: $('#bonusChallenge'), finalQuiz: $('#finalQuiz'), downloadDiploma: $('#downloadDiploma'),
+      exportProgress: $('#exportProgress'), importProgress: $('#importProgress'), exportPdf: $('#exportPdf'), numQuestions: $('#numQuestions'), timerToggle: $('#timerToggle'),
+      playerName: $('#playerName'), btnReset: $('#btnReset'),
+      worldLabel: $('#worldLabel'), phaseLabel: $('#phaseLabel'), qIndex: $('#qIndex'), qTotal: $('#qTotal'), timeLeft: $('#timeLeft'), score: $('#score'), timeBar: $('#timeBar'),
+      questionText: $('#questionText'), answer: $('#answer'), submitAnswer: $('#submitAnswer'), skipQuestion: $('#skipQuestion'),
+      feedback: $('#feedback'), quitToLobby: $('#quitToLobby'),
+      resultsTitle: $('#resultsTitle'), resultsStats: $('#resultsStats'), medals: $('#medals'), nextPhase: $('#nextPhase'), retryLevel: $('#retryLevel'), backLobby: $('#backLobby'),
+      freePractice: $('#freePractice'), liveRegion: $('#liveRegion'), toast: $('#toast'), confetti: $('#confetti'),
+      main: $('#main'),
+    };
+
+    // Utilities
+    const save = () => localStorage.setItem(storageKey, JSON.stringify(state));
+    const speak = (msg) => { el.liveRegion.textContent = msg; };
+    const toast = (msg) => { el.toast.textContent = msg; el.toast.classList.remove('hidden'); setTimeout(()=> el.toast.classList.add('hidden'), 1800); };
+
+    function rand(min, max){ return Math.floor(Math.random()*(max-min+1))+min; }
+    const now = ()=> performance.now();
+
+  // confetti removed for simplicity; keep a no-op for compatibility
+  function playConfetti(){ /* intentionally empty */ }
+
+    // focus styles for keyboard navigation
+    document.addEventListener('focusin', (e)=>{
+      const t = e.target;
+      if(t.tagName === 'BUTTON' || t.tagName === 'INPUT'){
+        t.style.outline = '3px solid rgba(56,189,248,0.18)';
+        t.style.borderColor = 'rgba(56,189,248,0.3)';
+      }
+    });
+    document.addEventListener('focusout', (e)=>{
+      const t = e.target;
+      if(t.tagName === 'BUTTON' || t.tagName === 'INPUT'){
+        t.style.outline = '';
+        t.style.borderColor = '';
+      }
+    });
+
+    function medalFrom(scorePct){
+      if(scorePct >= 0.9) return '🥇 Oro';
+      if(scorePct >= 0.75) return '🥈 Argento';
+      if(scorePct >= 0.6) return '🥉 Bronzo';
+      return '🎖️ Partecipazione';
+    }
+
+    function buildWorldGrid(){
+      // ensure the container exists (in case DOM was modified)
+      if(!el.worldGrid){ el.worldGrid = document.getElementById('worldGrid') || null; }
+      if(!el.worldGrid){
+        // try to create and insert it into the lobby before the action buttons
+        const grid = document.createElement('div'); grid.className = 'grid'; grid.id = 'worldGrid';
+        const ref = el.lobby && el.lobby.querySelector && el.lobby.querySelector('[style*="margin-top:16px"]');
+        if(ref && ref.parentNode) ref.parentNode.insertBefore(grid, ref);
+        else if(el.lobby) el.lobby.appendChild(grid);
+        el.worldGrid = grid;
+      }
+      el.worldGrid.innerHTML = '';
+      state.worlds.forEach(w=>{
+        const btn = document.createElement('button');
+        btn.className = 'btn';
+        btn.setAttribute('aria-label', `Mondo ${w.id} tabellina del ${w.id}${w.unlocked?'':' bloccato'}`);
+        btn.disabled = !w.unlocked;
+        btn.innerHTML = `<div style="display:flex; flex-direction:column; gap:6px;">
+          <div style="font-weight:800; font-size:18px;">× ${w.id}</div>
+          <div style="font-size:12px; color:var(--muted)">${w.completed? 'Completato ✅' : (w.unlocked? 'Pronto' : 'Bloccato 🔒')}</div>
+          <div class="medals">
+            <span class="medal">A: ${w.medals.allenamento? w.medals.allenamento : '–'}</span>
+            <span class="medal">T: ${w.medals.sfida? w.medals.sfida : '–'}</span>
+            <span class="medal">M: ${w.medals.misto? w.medals.misto : '–'}</span>
+          </div>
+        </div>`;
+  btn.addEventListener('click', ()=> startWorld(w.id));
+  // reveal animation staggered
+  setTimeout(()=> btn.classList.add('reveal'), 40 * w.id);
+  el.worldGrid.appendChild(btn);
+      });
+
+      el.totalScore.textContent = state.totalScore;
+      const done = state.worlds.filter(w=>w.completed).length;
+      el.worldsDone.textContent = `${done}/10`;
+      el.bestTime.textContent = state.bestTime? `${(state.bestTime/1000).toFixed(2)}s` : '–';
+      el.bonusChallenge.disabled = done < 5;
+      el.finalQuiz.disabled = done < 10;
+      el.downloadDiploma.disabled = done < 10;
+    }
+
+    function setView(view){
+      for(const v of ['lobby','game','results']){
+        el[v].classList.toggle('hidden', v!==view);
+      }
+      if(view==='lobby'){
+        el.main.focus();
+      }
+    }
+
+    function shuffle(arr){
+      for(let i=arr.length-1;i>0;i--){
+        const j = Math.floor(Math.random()*(i+1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    function buildSetFor(world, phase){
+      // world: 1..10, phase: 'allenamento'|'sfida'|'misto'|'bonus'|'finale'|'libero'
+      let pairs = [];
+      const numQ = Number(el.numQuestions && el.numQuestions.value ? el.numQuestions.value : 10);
+      if(phase==='libero'){
+        for(let a=1;a<=10;a++) pairs.push([world, a]);
+      } else if(phase==='allenamento'){
+        for(let a=1;a<=numQ;a++) pairs.push([world, ((a-1)%10)+1]); // repeat cycles if numQ>10
+      } else if(phase==='sfida'){
+        for(let a=1;a<=numQ;a++) pairs.push([world, ((a-1)%10)+1]);
+        shuffle(pairs);
+      } else if(phase==='misto'){
+        // Domande miste: pick true-random without replacement across unlocked worlds
+        const unlocked = state.worlds.filter(w=>w.unlocked).map(w=>w.id);
+        const pool = [];
+        for(const w of unlocked){ for(let b=1;b<=10;b++) pool.push([w,b]); }
+        shuffle(pool);
+        pairs = pool.slice(0, Math.max(8, numQ));
+      } else if(phase==='bonus'){
+        const pool = [1,2,3,4,5];
+        const pick = [];
+        while(pick.length < Math.max(10, numQ)){ pick.push([pool[rand(0,4)], rand(1,10)]); }
+        pairs = pick;
+      } else if(phase==='finale'){
+        const pick = [];
+        while(pick.length < Math.max(12, numQ)){ pick.push([rand(1,10), rand(1,10)]); }
+        pairs = pick;
+      }
+      return pairs;
+    }
+
+    function timeFor(world, phase){
+      // if timer is off in settings, return 0 => no timer
+      if(el.timerToggle && el.timerToggle.value === 'off') return 0;
+      if(phase==='allenamento') return world<=3 ? 60 : (world<=6 ? 40 : 30);
+      if(phase==='sfida') return world<=3 ? 50 : (world<=6 ? 35 : 30);
+      if(phase==='misto') return 30;
+      if(phase==='bonus') return 35;
+      if(phase==='finale') return 20 * 20; // 20 domande * 20s
+      if(phase==='libero') return 0; // senza timer
+      return 30;
+    }
+
+    function startWorld(world){
+      const w = state.worlds[world-1];
+      state.run = {
+        world,
+        phase: 'allenamento',
+        pairs: buildSetFor(world, 'allenamento'),
+        idx: 0,
+        score: 0,
+        correct: 0,
+        wrong: 0,
+        startTime: now(),
+        questionStart: null,
+        timeLeft: timeFor(world, 'allenamento'),
+        timerId: null,
+      };
+      setView('game');
+      renderHUD();
+      nextQuestion();
+      speak(`Mondo ${world} iniziato. Fase Allenamento.`);
+    }
+
+    function startSpecial(phase){
+      state.run = {
+        world: phase==='libero'? 1 : 10,
+        phase,
+        pairs: phase==='libero'? buildSetFor(1,'libero') : buildSetFor(null, phase),
+        idx: 0,
+        score: 0,
+        correct: 0,
+        wrong: 0,
+        startTime: now(),
+        questionStart: null,
+        timeLeft: timeFor(10, phase),
+        timerId: null,
+      };
+      setView('game');
+      renderHUD();
+      nextQuestion();
+      speak(`Modalità ${phase}.`);
+    }
+
+    function renderHUD(){
+      const r = state.run;
+      el.worldLabel.textContent = r.world;
+      el.phaseLabel.textContent = labelPhase(r.phase);
+      el.qIndex.textContent = r.idx+1;
+      el.qTotal.textContent = r.pairs.length;
+      el.score.textContent = r.score;
+      el.timeLeft.textContent = r.timeLeft || '∞';
+      el.timeBar.style.width = r.timeLeft? '100%' : '0%';
+    }
+
+    function labelPhase(p){
+      return p==='allenamento'? 'Allenamento' : p==='sfida'? 'Sfida a tempo' : p==='misto'? 'Misto' : p==='bonus'? 'Sfida Bonus' : p==='finale'? 'Mega Quiz' : 'Allenamento Libero';
+    }
+
+    function nextQuestion(){
+      const r = state.run;
+      if(r.idx >= r.pairs.length){
+        endLevel();
+        return;
+      }
+  const [a,b] = r.pairs[r.idx];
+      el.questionText.textContent = `${a} × ${b} = ?`;
+      el.answer.value = '';
+      el.answer.focus();
+      r.questionStart = now();
+  // record that this question was presented (asked)
+  recordAsked(a,b);
+      if(r.timeLeft){ startTimer(); }
+      renderHUD();
+    }
+
+    function startTimer(){
+      const r = state.run;
+      if(r.timerId) clearInterval(r.timerId);
+      const total = r.timeLeft; // seconds
+      const t0 = now();
+      r.timerId = setInterval(()=>{
+        const elapsed = (now()-t0)/1000;
+        const left = Math.max(0, Math.ceil(total - elapsed));
+        r.timeLeft = left;
+        el.timeLeft.textContent = left;
+        el.timeBar.style.width = `${Math.max(0, (left/total)*100)}%`;
+        if(left<=0){
+          clearInterval(r.timerId); r.timerId=null;
+          // Timer scaduto: chiudi livello
+          endLevel(true);
+        }
+      }, 200);
+    }
+
+    function submit(ans){
+      const r = state.run;
+      if(r.idx >= r.pairs.length) return;
+      const [a,b] = r.pairs[r.idx];
+      const correct = a*b;
+      const isCorrect = Number(ans) === correct;
+      const fast = (now()-r.questionStart) <= 3000; // 3s
+      if(isCorrect){
+        let delta = 10 + (fast?5:0);
+        r.score += delta; r.correct++;
+    feedback(`✅ Giusto! ${fast?'+15':' +10'} punti`);
+    recordResult(a,b, true, now()-r.questionStart);
+      } else {
+        r.score -= 2; r.wrong++;
+    feedback(`❌ Sbagliato. La risposta era ${correct}. −2 punti`);
+    recordResult(a,b, false, now()-r.questionStart);
+      }
+      r.idx++;
+      el.score.textContent = r.score;
+      el.qIndex.textContent = r.idx+1;
+      setTimeout(nextQuestion, 400);
+    }
+
+  // Stats helpers
+  function ensureStat(w, b){ if(!state.stats[w]) state.stats[w] = {}; if(!state.stats[w][b]) state.stats[w][b] = { asked:0, correct:0, times:[] }; }
+  function recordAsked(a,b){ ensureStat(a,b); state.stats[a][b].asked += 1; save(); }
+  function recordResult(a,b,ok,timeMs){ ensureStat(a,b); if(ok) state.stats[a][b].correct += 1; state.stats[a][b].times.push(timeMs); save(); }
+
+    function skip(){
+      const r = state.run;
+      r.score -= 2; r.wrong++;
+      feedback('⏭️ Saltata. −2 punti');
+      r.idx++;
+      el.score.textContent = r.score;
+      el.qIndex.textContent = r.idx+1;
+      setTimeout(nextQuestion, 200);
+    }
+
+    function feedback(msg){
+      el.feedback.textContent = msg;
+      speak(msg);
+    }
+
+    function endLevel(timeExpired=false){
+      const r = state.run;
+      if(r.timerId){ clearInterval(r.timerId); r.timerId=null; }
+      const elapsed = now() - r.startTime;
+      if(!state.bestTime || elapsed < state.bestTime){ state.bestTime = elapsed; }
+      // Calcolo medaglia
+      const maxScore = r.pairs.length*10 + r.pairs.length*5; // se tutte entro 3s
+      const pct = Math.max(0, r.score)/Math.max(1, maxScore);
+      const medal = medalFrom(pct);
+
+      el.resultsTitle.textContent = timeExpired? 'Tempo scaduto ⏰' : 'Livello completato!';
+      el.resultsStats.textContent = `Corrette: ${r.correct}, Sbagliate: ${r.wrong}, Punteggio: ${r.score}, Tempo: ${(elapsed/1000).toFixed(1)}s`;
+      el.medals.innerHTML = `<span class="medal">${medal}</span>`;
+
+      // Salvataggio progressi se è mondo (non libero/bonus/finale)
+      const w = state.worlds[r.world-1];
+      if(['allenamento','sfida','misto'].includes(r.phase)){
+        const key = r.phase;
+        w.medals[key] = medal;
+        if(w.medals.allenamento && w.medals.sfida && w.medals.misto){
+          w.completed = true;
+          const next = state.worlds[r.world];
+          if(next) next.unlocked = true;
+          state.totalScore += Math.max(0, r.score);
+          playConfetti();
+        }
+      }
+      if(r.phase==='finale'){
+        state.totalScore += Math.max(0, r.score);
+        playConfetti(); playConfetti();
+      }
+
+      save();
+      buildWorldGrid();
+      setView('results');
+    }
+
+    // Diploma (canvas → download)
+    function downloadDiploma(){
+      const name = state.playerName || 'Campione';
+      const canvas = document.createElement('canvas');
+      canvas.width = 1200; canvas.height = 800;
+      const ctx = canvas.getContext('2d');
+      // bg
+      const grad = ctx.createLinearGradient(0,0,1200,800);
+      grad.addColorStop(0,'#0ea5e9'); grad.addColorStop(1,'#22c55e');
+      ctx.fillStyle = grad; ctx.fillRect(0,0,1200,800);
+      // card
+      ctx.fillStyle = 'rgba(255,255,255,0.92)';
+      roundRect(ctx, 80,80,1040,640,32, true);
+      ctx.fillStyle = '#0b1220';
+      ctx.font = 'bold 54px ui-rounded, system-ui';
+      ctx.fillText('Diploma delle Tabelline', 220, 190);
+      ctx.font = '28px system-ui';
+      ctx.fillText('Conferito a', 220, 250);
+      ctx.font = 'bold 48px ui-rounded, system-ui';
+      ctx.fillText(name, 220, 310);
+      ctx.font = '26px system-ui';
+      const done = state.worlds.filter(w=>w.completed).length;
+      ctx.fillText(`Mondi completati: ${done}/10 · Punteggio totale: ${state.totalScore}`, 220, 360);
+      ctx.fillText(`Record migliore: ${state.bestTime? (state.bestTime/1000).toFixed(2)+'s' : '–'}`, 220, 400);
+      ctx.font = '20px system-ui';
+      ctx.fillText('Firma del maestro delle Tabelline: ____________', 220, 520);
+      ctx.fillText('Data: ' + new Date().toLocaleDateString(), 220, 560);
+      // medal icons simple circles
+      for(let i=0;i<3;i++){
+        ctx.beginPath();
+        ctx.arc(950 + i*0, 300 + i*0, 0, 0, Math.PI*2);
+        ctx.fill();
+      }
+      const url = canvas.toDataURL('image/png');
+      const a = document.createElement('a');
+      a.href = url; a.download = 'Diploma-Tabelline.png';
+      a.click();
+    }
+
+    function roundRect(ctx, x,y,w,h,r, fill=true){
+      ctx.beginPath();
+      ctx.moveTo(x+r, y);
+      ctx.arcTo(x+w, y, x+w, y+h, r);
+      ctx.arcTo(x+w, y+h, x, y+h, r);
+      ctx.arcTo(x, y+h, x, y, r);
+      ctx.arcTo(x, y, x+w, y, r);
+      if(fill) ctx.fill(); else ctx.stroke();
+    }
+
+    // Events
+    el.submitAnswer.addEventListener('click', ()=> submit(el.answer.value.trim()));
+    el.answer.addEventListener('keydown', (e)=>{ if(e.key==='Enter') submit(el.answer.value.trim()); });
+    el.skipQuestion.addEventListener('click', skip);
+    el.quitToLobby.addEventListener('click', ()=>{ setView('lobby'); buildWorldGrid(); speak('Tornato alla selezione mondi.'); });
+
+    el.nextPhase.addEventListener('click', ()=>{
+      const r = state.run; if(!r) return;
+      const order = ['allenamento','sfida','misto'];
+      const i = order.indexOf(r.phase);
+      if(i>=0 && i<order.length-1){
+        // next phase in same world
+        r.phase = order[i+1];
+        r.pairs = buildSetFor(r.world, r.phase);
+        r.idx=0; r.score=0; r.correct=0; r.wrong=0; r.startTime=now(); r.timeLeft=timeFor(r.world,r.phase);
+        setView('game'); renderHUD(); nextQuestion();
+      } else {
+        setView('lobby'); buildWorldGrid();
+      }
+    });
+    el.retryLevel.addEventListener('click', ()=>{
+      const r = state.run; if(!r) return;
+      r.pairs = buildSetFor(r.world, r.phase);
+      r.idx=0; r.score=0; r.correct=0; r.wrong=0; r.startTime=now(); r.timeLeft=timeFor(r.world,r.phase);
+      setView('game'); renderHUD(); nextQuestion();
+    });
+    el.backLobby.addEventListener('click', ()=>{ setView('lobby'); buildWorldGrid(); });
+
+    el.playerName.addEventListener('input', (e)=>{ state.playerName = e.target.value; save(); });
+
+    // Helper to escape text when writing into an opened window
+    function escapeHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+    // Build structured stats report used by both TEX and PDF exports
+    function buildReportData(){
+      const report = { name: state.playerName || '—', date: new Date().toLocaleString(), worlds: [] };
+      let totalAsked = 0, totalCorrect = 0;
+      for(const w of state.worlds){
+        const wId = w.id; const statsW = state.stats && state.stats[wId];
+        if(!statsW) continue;
+        const items = [];
+        for(const bStr of Object.keys(statsW).sort((a,b)=>a-b)){
+          const b = Number(bStr); const s = statsW[bStr];
+          if(!s || s.asked===0) continue;
+          // compute a robust average time (ms): filter out implausible outliers
+          const rawTimes = Array.isArray(s.times) ? s.times.filter(t=>typeof t==='number' && isFinite(t) && t>=0) : [];
+          // sensible bounds: ignore too-fast <50ms (likely accidental) and too-slow >120000ms (2min)
+          const filtered = rawTimes.filter(t => t >= 50 && t <= 120000);
+          const useTimes = filtered.length ? filtered : rawTimes; // prefer filtered if any
+          const avg = useTimes.length ? Math.round(useTimes.reduce((x,y)=>x+y,0)/useTimes.length) : null;
+          items.push({ multiplier: b, asked: s.asked, correct: s.correct, avgTime: avg, samples: useTimes.length });
+          totalAsked += s.asked; totalCorrect += s.correct;
+        }
+        if(items.length) report.worlds.push({ id: wId, items });
+      }
+      report.summary = { totalAsked, totalCorrect };
+      return report;
+    }
+
+    // Export -> generate LaTeX report and also produce a PDF preview opened in a new tab.
+    // If jsPDF is available we render a simple PDF (textual representation) and open it; otherwise we open the .tex as plain text.
+    // Export .tex only (download), keep PDF generation separate
+    // Export current state as JSON (full game state) so it can be imported later
+    el.exportProgress.addEventListener('click', ()=>{
+      try{
+        const json = JSON.stringify(state, null, 2);
+        const blob = new Blob([json], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a'); a.href = url; a.download = 'tabelline-state.json'; document.body.appendChild(a); a.click(); a.remove();
+        setTimeout(()=> URL.revokeObjectURL(url), 2000);
+        toast('Stato esportato come tabelline-state.json');
+      }catch(e){ toast('Errore esportazione'); console.error(e); }
+    });
+
+    // Export PDF preview: build a nicer PDF with cover page, tables, percentages and avg times,
+    // open in new tab and also trigger a download of the PDF file.
+  el.exportPdf.addEventListener('click', async ()=>{
+      const data = buildReportData();
+      try{
+        const jsPDF = (window.jspdf && window.jspdf.jsPDF) ? window.jspdf.jsPDF : (window.jsPDF || null);
+        if(!jsPDF){
+          // fallback to text
+          const rep = buildReportData(); const lines = [];
+          lines.push('Report delle Tabelline'); lines.push(`Nome: ${rep.name}`); lines.push(`Data: ${rep.date}`);
+          for(const w of rep.worlds){ lines.push(`Mondo ${w.id}`); for(const it of w.items) lines.push(`${w.id}x${it.multiplier}: richieste=${it.asked}, corrette=${it.correct}`); }
+          let opened = false;
+          try{ const w = window.open('', '_blank'); if(w){ w.document.title = 'Report Tabelline'; w.document.body.innerHTML = '<pre>'+ escapeHtml(lines.join('\n')) +'</pre>'; opened = true; } }catch(e){ opened = false; }
+          if(!opened){
+            // fallback: attempt clipboard, then download
+            try{ if(navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(lines.join('\n')); toast('Report copiato negli appunti'); opened = true; } }catch(e){}
+            if(!opened){ const blob = new Blob([lines.join('\n')], { type: 'text/plain' }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = 'tabelline-report.txt'; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=> URL.revokeObjectURL(url),2000); toast('Report scaricato'); }
+          }
+          return;
+        }
+        const doc = new jsPDF({ unit: 'pt', format: 'a4' });
+        const margin = 40; const pageW = 595.28; const pageH = 842; const worldsPerPage = 3;
+        function safeText(s){ if(!s) return '—'; try{ return String(s).replace(/[\u{1F300}-\u{1FAFF}\u{1F600}-\u{1F64F}\u{1F680}-\u{1F6FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu,'').replace(/[^\x00-\xff]/g,''); }catch(e){ return String(s).replace(/[^\x00-\xff]/g,''); } }
+
+        // compute medals counts
+        let gold=0, silver=0, bronze=0, part=0;
+        for(const w of state.worlds){ const m = w.medals||{}; ['allenamento','sfida','misto'].forEach(k=>{ const v=m[k]; if(!v) return; if(v.includes('Oro')) gold++; else if(v.includes('Argento')) silver++; else if(v.includes('Bronzo')) bronze++; else part++; }); }
+
+        function renderHeader(d){
+          d.setFillColor(6,30,60); d.rect(0,0,pageW,140,'F');
+          d.setFontSize(28); d.setTextColor(255,255,255); d.setFont('Helvetica','bold');
+          d.text('Avventura delle Tabelline', pageW/2, 58, { align: 'center' });
+          d.setFontSize(11); d.setFont('Helvetica','normal'); d.text(`Giocatore: ${safeText(data.name)}`, pageW/2, 78, { align: 'center' });
+          d.text(`Data: ${safeText(data.date)}`, pageW/2, 94, { align: 'center' });
+          // small medals row on header
+          const startX = pageW/2 - 120; const cx = [startX, startX+80, startX+160, startX+240];
+          const labels = [`Oro ${gold}`, `Argento ${silver}`, `Bronzo ${bronze}`, `Partecp. ${part}`];
+          const colors = [[212,175,55],[192,192,192],[205,127,50],[120,120,120]];
+          for(let i=0;i<4;i++){ d.setFillColor(...colors[i]); d.circle(cx[i], 120, 18, 'F'); d.setTextColor(255,255,255); d.setFontSize(9); d.text(labels[i], cx[i], 144, { align: 'center' }); }
+        }
+
+        function drawRoundedRectPdf(d, x, y, w, h, r, fill){
+          // prefer jsPDF roundedRect if available
+          try{
+            if(typeof d.roundedRect === 'function'){
+              d.setDrawColor(220); d.setFillColor(255,255,255);
+              d.roundedRect(x, y, w, h, r, r, fill? 'F' : 'S');
+              return;
+            }
+          }catch(e){ /* fallthrough to simple rect */ }
+          // fallback: simple filled rect
+          d.setDrawColor(220); d.setFillColor(255,255,255); d.rect(x, y, w, h, fill? 'F' : 'S');
+        }
+
+        function renderWorldTable(d, wData, x, yTop){
+          // content box
+          drawRoundedRectPdf(d, x, yTop, pageW - margin*2, 130, 8, true);
+          // header
+          d.setTextColor(10,10,10); d.setFont('Helvetica','bold'); d.setFontSize(13);
+          d.text(`Mondo ${wData.id}`, x + 12, yTop + 22);
+          // table header
+          const colX = [x + 12, x + 60, x + 150, x + 240, x + 320];
+          d.setFont('Helvetica','bold'); d.setFontSize(10);
+          ['×','Richieste','Corrette','%','Tempo medio (ms)'].forEach((h,i)=> d.text(h, colX[i], yTop + 44));
+          d.setFont('Helvetica','normal'); d.setFontSize(10);
+          let y = yTop + 60;
+          for(const it of wData.items){ const pct = it.asked? Math.round((it.correct/it.asked)*100) : 0; const avg = it.avgTime? String(it.avgTime) : '—';
+            d.text(String(it.multiplier), colX[0], y); d.text(String(it.asked), colX[1], y); d.text(String(it.correct), colX[2], y); d.text(String(pct)+'%', colX[3], y); d.text(avg, colX[4], y); y += 14; }
+        }
+
+        // paginate worlds: worldsPerPage per sheet
+        const pages = Math.max(1, Math.ceil(data.worlds.length / worldsPerPage));
+        for(let p=0;p<pages;p++){
+          if(p>0) doc.addPage(); renderHeader(doc);
+          // place up to worldsPerPage boxes starting after header
+          const start = p*worldsPerPage; const slice = data.worlds.slice(start, start + worldsPerPage);
+          let yStart = 170;
+          for(const w of slice){ renderWorldTable(doc, w, margin, yStart); yStart += 150; }
+          // if last page, render summary below
+          if(p === pages - 1){
+            const sumY = yStart + 8;
+            doc.setFont('Helvetica','bold'); doc.setFontSize(12); doc.setTextColor(10,10,10);
+            doc.text('Sommario', margin, sumY);
+            doc.setFont('Helvetica','normal'); doc.setFontSize(10);
+            doc.text(`Totale domande presentate: ${data.summary.totalAsked}`, margin, sumY + 16);
+            doc.text(`Totale risposte corrette: ${data.summary.totalCorrect}`, margin, sumY + 32);
+          }
+        }
+
+        // produce and open
+        const pdfBlob = doc.output('blob'); const pdfUrl = URL.createObjectURL(pdfBlob);
+        // Try opening in a new tab by injecting an iframe (more robust than directly opening the blob URL)
+        let openedPdf = false;
+        try{
+          const w = window.open('', '_blank');
+          if(w){
+            w.document.title = 'Report Tabelline';
+            w.document.body.style.margin = '0';
+            const iframe = w.document.createElement('iframe');
+            iframe.style.width = '100%'; iframe.style.height = '100%'; iframe.style.border = 'none';
+            iframe.src = pdfUrl;
+            w.document.body.appendChild(iframe);
+            openedPdf = true;
+          }
+        }catch(e){ openedPdf = false; }
+        if(!openedPdf){
+          try{ const a = document.createElement('a'); a.href = pdfUrl; a.download = 'tabelline-report.pdf'; document.body.appendChild(a); a.click(); a.remove(); toast('PDF scaricato'); }catch(e){ toast('Impossibile aprire/ scaricare il PDF. Prova a consentire i popup.'); }
+        }
+        setTimeout(()=> URL.revokeObjectURL(pdfUrl), 5000);
+      }catch(err){
+        console.error(err);
+        const msg = String(err && (err.stack || err.message || err));
+        // try to open a diagnostics tab with the error
+        try{
+          let openedDiag = false;
+          try{ const w = window.open('', '_blank'); if(w){ openedDiag = true; w.document.title = 'Errore generazione PDF'; w.document.head.innerHTML = '<meta charset="utf-8"><style>body{font-family:system-ui,monospace;background:#07111a;color:#e6eef8;padding:18px}</style>'; const pre = w.document.createElement('pre'); pre.textContent = msg; pre.style.whiteSpace='pre-wrap'; pre.style.fontSize='12px'; w.document.body.appendChild(pre); const btn = w.document.createElement('button'); btn.textContent = 'Scarica report errore'; btn.style.marginTop='12px'; btn.addEventListener('click', ()=>{ const blob = new Blob([msg], { type: 'text/plain' }); const url = URL.createObjectURL(blob); const a = w.document.createElement('a'); a.href = url; a.download = 'tabelline-pdf-error.txt'; w.document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=> URL.revokeObjectURL(url),2000); }); w.document.body.appendChild(btn); } }catch(e){ openedDiag = false; }
+          if(!openedDiag){ try{ if(navigator.clipboard && navigator.clipboard.writeText){ await navigator.clipboard.writeText(msg); toast('Errore copiato negli appunti'); openedDiag = true; } }catch(e){} }
+          if(!openedDiag){ const blob = new Blob([msg], { type: 'text/plain' }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = 'tabelline-pdf-error.txt'; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=> URL.revokeObjectURL(url),2000); toast('Errore salvato su file'); }
+        }catch(e){}
+        toast('Errore generazione PDF — vedi console o scheda diagnostica');
+      }
+    });
+    el.importProgress.addEventListener('change', (e)=>{
+      const f = e.target.files && e.target.files[0];
+      if(!f) return; const r = new FileReader();
+      r.onload = ()=>{
+        try{
+          const obj = JSON.parse(r.result);
+          // Validate incoming structure
+          if(obj && Array.isArray(obj.worlds) && obj.worlds.length>=1){
+            // Merge safe keys only
+            state.playerName = obj.playerName || state.playerName;
+            state.totalScore = typeof obj.totalScore === 'number' ? obj.totalScore : state.totalScore;
+            state.bestTime = obj.bestTime || state.bestTime;
+            state.worlds = obj.worlds;
+            state.stats = obj.stats && typeof obj.stats === 'object' ? obj.stats : state.stats;
+            save(); buildWorldGrid(); toast('Progressi importati');
+          } else {
+            toast('File non valido o struttura mancante');
+          }
+        }catch(err){ toast('File non valido'); }
+      };
+      r.readAsText(f);
+    });
+    el.btnReset.addEventListener('click', ()=>{
+      if(confirm('Azzerare tutti i progressi?')){
+        localStorage.removeItem(storageKey); window.location.reload();
+      }
+    });
+
+    el.freePractice.addEventListener('click', ()=> startSpecial('libero'));
+    el.bonusChallenge.addEventListener('click', ()=> startSpecial('bonus'));
+    el.finalQuiz.addEventListener('click', ()=> startSpecial('finale'));
+    el.downloadDiploma.addEventListener('click', downloadDiploma);
+
+    // Debug helper: inline state viewer
+    const btnInline = document.getElementById('showStateInline');
+    let inlineShown = false;
+    if(btnInline){
+      const container = document.createElement('pre'); container.id = 'inlineStateContainer';
+      container.style.background = '#07111a'; container.style.border = '1px solid rgba(255,255,255,0.06)'; container.style.padding = '10px'; container.style.borderRadius='8px'; container.style.marginTop='12px'; container.style.maxHeight='240px'; container.style.overflow='auto'; container.style.display='none'; container.style.color = 'var(--text)';
+      const lobby = document.getElementById('lobby'); if(lobby) lobby.appendChild(container);
+      btnInline.addEventListener('click', ()=>{
+        inlineShown = !inlineShown;
+        container.style.display = inlineShown? 'block' : 'none';
+        if(inlineShown) container.textContent = JSON.stringify(state, null, 2);
+      });
+    }
+
+    // Diagnostic button: open current state as JSON in a new tab for debugging
+    const dbg = document.getElementById('dbgState');
+    if(dbg) dbg.addEventListener('click', async ()=>{
+      const s = JSON.stringify(state, null, 2);
+      // Try to open a new tab with the JSON pretty-printed
+      let opened = false;
+      try{
+        const w = window.open('about:blank', '_blank');
+        if(w){
+          w.document.title = 'stato-tabelline.json';
+          // minimal styling for readability
+          w.document.head.innerHTML = '<meta charset="utf-8"><style>body{font-family:monospace;white-space:pre-wrap;padding:18px;background:#0b1220;color:#e6eef8}</style>';
+          w.document.body.innerHTML = `<pre>${escapeHtml(s)}</pre>`;
+          opened = true;
+        }
+      }catch(e){ opened = false; }
+
+      if(opened){
+        toast('Stato aperto in una nuova scheda.');
+        return;
+      }
+
+      // Popup blocked or failed: try to copy to clipboard, otherwise download JSON
+      try{
+        if(navigator.clipboard && navigator.clipboard.writeText){
+          await navigator.clipboard.writeText(s);
+          toast('Stato copiato negli appunti. Incolla dove vuoi per condividerlo.');
+          return;
+        }
+      }catch(e){ /* clipboard failed, fallback to download */ }
+
+      // Fallback: download the JSON file
+      try{
+        const blob = new Blob([s], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url; a.download = 'tabelline-state.json'; document.body.appendChild(a); a.click(); a.remove();
+        setTimeout(()=> URL.revokeObjectURL(url), 3000);
+        toast('Ho scaricato lo stato come tabelline-state.json');
+      }catch(e){
+        // Last resort: show small alert
+        alert('Impossibile aprire o scaricare lo stato. Copia manuale:\n\n' + s.slice(0, 2000));
+      }
+    });
+
+    document.addEventListener('keydown', (e)=>{
+      if(e.key==='Escape'){ setView('lobby'); buildWorldGrid(); }
+    });
+
+    // Mobile detection: if device appears to be a phone, show overlay and prevent play
+    function isMobile(){ return /Mobi|Android|iPhone|iPad|iPod/.test(navigator.userAgent); }
+    if(isMobile()){
+      const ov = document.createElement('div');
+      ov.style.position='fixed'; ov.style.inset='0'; ov.style.background='linear-gradient(180deg, rgba(2,6,23,0.95), rgba(2,6,23,0.98))';
+      ov.style.zIndex = 99999; ov.style.display='flex'; ov.style.alignItems='center'; ov.style.justifyContent='center'; ov.style.padding='20px';
+      ov.innerHTML = `<div style="max-width:720px; text-align:center; color:var(--text);">
+        <h2 style="margin-top:0;">Dispositivo non consigliato</h2>
+        <p style="color:var(--muted)">Questa versione del gioco è pensata per tablet e computer. Su telefono alcune funzionalità possono non funzionare correttamente. Usa un dispositivo più grande per la migliore esperienza.</p>
+        <button id="dismissMobile" class="primary">Prova comunque</button>
+      </div>`;
+      document.body.appendChild(ov);
+      document.getElementById('dismissMobile').addEventListener('click', ()=> ov.remove());
+    }
+
+  // Repair and Init
+  ensureWorlds();
+  buildWorldGrid();
+  setView('lobby');
+  if(state.playerName) el.playerName.value = state.playerName;
+  })();
+  </script>
+</body>
+</html>

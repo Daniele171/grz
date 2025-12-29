@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cambia Sfondo</title>
+        <link rel="stylesheet" href="../css/cambia_sfondo.css">
+</head>
+<body>
+    <h1>Cambia Sfondo</h1>
+    <div class="container">
+        <div class="rettangolo rosso" id="rosso"></div>
+        <div class="rettangolo verde" id="verde"></div>
+        <div class="rettangolo blu" id="blu"></div>
+        <div class="rettangolo giallo" id="giallo"></div>
+    </div>
+    <div class="controls">
+        <input type="checkbox" id="checkbox" name="checkbox">
+        <label for="checkbox">Abilita Cambio Sfondo</label>
+        <div id="hexForm">
+            <input type="text" id="hexColor" placeholder="Esadecimale">
+            <button type="button" id="applyColor">Applica</button>
+        </div>
+    </div>
+    <script src="../js/cambia_sfondo.js" type="text/javascript"></script>
+</body>
+</html>
